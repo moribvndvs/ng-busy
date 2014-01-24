@@ -1,12 +1,12 @@
 {
-  "name": "ng-busy-button",
+  "name": "ng-busy",
   "version": "0.1.0",
-  "homepage": "https://github.com/HackedByChinese/ng-busy-button",
+  "homepage": "https://github.com/HackedByChinese/ng-busy",
   "authors": [
     "Mike Grabski <me@mikegrabski.com>"
   ],
-  "description": "An AngularJS module for buttons that let you know they are gettin' busy.",
-  "main": "angular-busy-button.js",
+  "description": "An AngularJS module for reacting to when your app is busy.",
+  "main": ["build/angular-busy.js", "build/angular-busy.min.js", "build/angular-busy.map"],
   "keywords": [
     "angular",
     "angularjs",

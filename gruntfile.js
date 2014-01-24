@@ -40,17 +40,18 @@ module.exports = function(grunt) {
 				banner: '<%= banner %>'
 			},
 			js: {
-				src: ['src/angular-busy-button.js'],
-				dest: 'build/angular-busy-button.js'
+				src: ['src/angular-busy.js'],
+				dest: 'build/angular-busy.js'
 			}
 		},
 		uglify: {
 			js: {
-				src: ['src/angular-busy-button.js'],
-				dest: 'build/angular-busy-button.min.js',
+				src: ['build/angular-busy.js'],
+				dest: 'build/angular-busy.min.js',
 				options: {
 					banner: '<%= banner %>',
-					sourceMap: 'build/angular-busy-button.map'
+					sourceMap: true,
+					sourceMapName: 'build/angular-busy.map'
 				}
 			}
 		}
@@ -58,5 +59,5 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('test', ['karma:unit']);
 	grunt.registerTask('test-server', ['karma:server']);
-	grunt.registerTask('build', ['clean', 'uglify','concat:js']);
+	grunt.registerTask('build', ['clean', 'concat:js', 'uglify']);
 };

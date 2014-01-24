@@ -1,18 +1,18 @@
 {
-  "name": "ng-busy-button",
+  "name": "ng-busy",
   "version": "0.1.0",
-  "description": "An AngularJS module for buttons that let you know they're gettin' busy!",
+  "description": "An AngularJS module for reacting to when your app is busy.",
   "main": [
-    "build/angular-busy-button.js",
-    "build/angular-busy-button.min.js",
-    "build/angular-busy-button.min.map"
+    "build/angular-busy.js",
+    "build/angular-busy.min.js",
+    "build/angular-busy.map"
   ],
   "scripts": {
     "test": "grunt test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HackedByChinese/ng-busy-button.git"
+    "url": "https://github.com/HackedByChinese/ng-busy.git"
   },
   "keywords": [
     "javascript",
@@ -28,7 +28,7 @@
   "author": "Mike Grabski <me@mikegrabski.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HackedByChinese/ng-busy-button/issues"
+    "url": "https://github.com/HackedByChinese/ng-busy/issues"
   },
   "devDependencies": {
     "karma-firefox-launcher": "~0.1.3",
