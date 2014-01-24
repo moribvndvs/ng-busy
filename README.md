@@ -1,4 +1,4 @@
-ng-busy-button
+ng-busy
 ==============
 
-An AngularJS module for buttons that let you know they are gettin' busy.
+An AngularJS module for reacting to when your app is busy.
