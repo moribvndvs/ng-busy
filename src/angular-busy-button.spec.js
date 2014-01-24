@@ -1,6 +1,6 @@
 'use strict';
 
-describe('ngIdle', function() {
+describe('ngBusyButton', function() {
     // helpers
     beforeEach(function () {
         this.addMatchers({
