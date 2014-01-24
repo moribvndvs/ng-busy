@@ -123,4 +123,26 @@ describe('ngBusy', function() {
     		expect($rootScope.$broadcast).not.toHaveBeenCalled();
     	});
     });
+
+	describe('busy', function() {
+		beforeEach(module('ngBusy.busy'));
+
+    	var $scope, $compile, $document, create;
+
+    	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_) {
+    		$scope = _$rootScope_;
+            $compile = _$compile_;
+            $document = _$document_;
+
+            create = function(template) {
+            	template = template || '<button busy="lt;i class=&amp;icon-refresh icon-spin&amp;&gt;&lt;/i&gt; Loading...">Submit</button>';
+            	var el = $compile(angular.element(template))($scope);
+            	$scope.$digest();
+            	return el;
+            };
+    	}));
+
+    	afterEach(function() {
+    	});
+	});
 });
