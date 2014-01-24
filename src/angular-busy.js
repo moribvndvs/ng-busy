@@ -47,4 +47,22 @@
 		.config(['$httpProvider', function($httpProvider) {			
 			$httpProvider.interceptors.push('busyInterceptor');
 		}]);
+
+    // <button busy="Loading...">...
+    // <button busy="Loading..." busy-trigger="any|name|url" busy-trigger-value="string|/regex/">
+    // <button busy="" busy-options="options">...
+
+    // { begin: {when: any|name|url, matches: string|regex, addClasses: string, removeClasses: string, disabled:bool}, end{when:any|name|url, matches: string|regex, addClasses: string, removeClasses: string, disabled:bool}  }
+    
+	angular.module('ngBusy.busy', [])
+		.directive('busy', [function() {
+			return {
+				restrict: 'A',
+				link: function($scope) {
+					
+				}
+			}
+		}]);
+
+	angular.module('ngBusy', ['ngBusy.interceptor', 'ngBusy.busy']);
 })(window, window.angular);
