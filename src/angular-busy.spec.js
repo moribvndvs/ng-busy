@@ -127,22 +127,72 @@ describe('ngBusy', function() {
 	describe('busy', function() {
 		beforeEach(module('ngBusy.busy'));
 
-    	var $scope, $compile, $document, create;
+    	var $rootScope, $scope, $compile, $document, create;
 
     	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_) {
-    		$scope = _$rootScope_;
+    		$rootScope = _$rootScope_;
             $compile = _$compile_;
             $document = _$document_;
 
             create = function(template) {
-            	template = template || '<button busy="lt;i class=&amp;icon-refresh icon-spin&amp;&gt;&lt;/i&gt; Loading...">Submit</button>';
-            	var el = $compile(angular.element(template))($scope);
-            	$scope.$digest();
+            	template = template || '<button busy="Loading..."><i class="icon-ok"></i> Submit</button>';
+            	var el = $compile(angular.element(template))($rootScope);
+            	$rootScope.$digest();
             	return el;
             };
     	}));
 
-    	afterEach(function() {
-    	});
+        it ('should use default options', function() {
+            $scope = create('<button busy></button>').isolateScope();
+            expect($scope.busyText).toBe('Loading...');
+            expect($scope.busyWhenUrl).toBeUndefined();
+            expect($scope.busyWhenName).toBeUndefined();
+            expect($scope.busyAddClasses).toBeUndefined();
+            expect($scope.busyRemoveClasses).toBeUndefined();
+            expect($scope.busyDisabled).toBeTruthy();
+            expect($scope.notBusyWhenUrl).toBeUndefined();
+            expect($scope.notBusyWhenName).toBeUndefined();
+            expect($scope.notBusyAddClasses).toBeUndefined();
+            expect($scope.notBusyRemoveClasses).toBeUndefined();
+            expect($scope.notBusyDisabled).toBeFalsy();
+        });
+
+        it ('should use explicit options', function() {
+            $scope = create('<button busy="Busy..." busy-when-url="url" busy-when-name="name" busy-add-classes="add classes" busy-remove-classes="remove classes" busy-disabled="false" not-busy-when-url="url" not-busy-when-name="name" not-busy-add-classes="add classes" not-busy-remove-classes="remove classes" not-busy-disabled="true"></button>').isolateScope();
+            expect($scope.busyText).toBe('Busy...');
+            expect($scope.busyWhenUrl).toBe('url');
+            expect($scope.busyWhenName).toBe('name');
+            expect($scope.busyAddClasses).toBe('add classes');
+            expect($scope.busyRemoveClasses).toBe('remove classes');
+            expect($scope.busyDisabled).toBe(false);
+            expect($scope.notBusyWhenUrl).toBe('url');
+            expect($scope.notBusyWhenName).toBe('name');
+            expect($scope.notBusyAddClasses).toBe('add classes');
+            expect($scope.notBusyRemoveClasses).toBe('remove classes');
+            expect($scope.notBusyDisabled).toBe(true);
+        });
+
+        it('should swap original content with busy text on any busy.begin', function() {
+            var el = create(), $scope = el.isolateScope();
+
+            expect($scope.busy).toBeFalsy();
+
+            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});
+
+            expect($scope.notBusyContent).toBe('<i class="icon-ok"></i> Submit');
+            expect(el.html()).toBe("Loading...");
+            expect($scope.busy).toBe(true);
+        });
+
+        it ('should swap busy text with original content on busy.end-one with zero remaining', function() {
+            var el = create(), $scope = el.isolateScope();
+            
+            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});            
+            expect($scope.busy).toBe(true);
+
+            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            expect($scope.busy).toBe(false);
+            expect(el.html()).toBe('<i class="icon-ok"></i> Submit');            
+        });
 	});
 });
