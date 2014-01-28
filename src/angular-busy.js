@@ -95,8 +95,16 @@
 						scope.notBusyDisabled = angular.isDefined(parsed) ? parsed : false;
 					});
 
-					scope.$on('busy.begin', function() {
-						if (!scope.busy) {
+					scope.isBusyFor = function(config, begin) {
+						if (begin === true) return true;
+
+						if (scope.busyWhenName) return config.name == scope.busyWhenName;
+						else if (scope.busyWhenUrl) return config.url == scope.busyWhenUrl;
+						else return config.remaining <= 0;
+					};
+
+					scope.$on('busy.begin', function(evt, config) {
+						if (!scope.busy && scope.isBusyFor(config, true)) {
 							scope.notBusyContent = element.html();
 							if (scope.busyDisabled) $timeout(function() {element.attr('disabled', true);});
 							if (scope.busyText) element.html(scope.busyText);
@@ -105,13 +113,13 @@
 						}
 					});
 
-					scope.$on('busy.end-one', function(args) {
-						if (scope.busy) {							
+					scope.$on('busy.end-one', function(evt, config) {
+						if (scope.busy && scope.isBusyFor(config)) {
 							if (scope.busyText) element.html(scope.notBusyContent);
 							element.attr('disabled', scope.notBusyDisabled===true);
 							scope.busy = false;
 						}
-					})
+					});
 				}
 			}
 		}]);

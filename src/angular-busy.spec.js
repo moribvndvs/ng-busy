@@ -231,5 +231,33 @@ describe('ngBusy', function() {
             $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
             expect(el.attr('disabled')).toBe('disabled');
         });
+
+        it ('isBusyFor should always return true when begin flag is true', function() {
+            var el = create(), $scope = el.isolateScope();
+
+            expect($scope.isBusyFor({remaining: 0}, true)).toBe(true);
+            expect($scope.isBusyFor({name: 'name', url: 'path', remaining: 2}, true)).toBe(true);
+        });
+
+        it ('isBusyFor should return true only if remaining is zero', function() {
+            var el = create(), $scope = el.isolateScope();
+
+            expect($scope.isBusyFor({remaining: 0})).toBe(true);
+            expect($scope.isBusyFor({name: 'name', url: 'path', remaining: 2})).toBe(false);
+        });
+
+        it ('isBusyFor should return true only if url matches', function() {
+            var el = create('<button busy busy-when-url="/path"></button>'), $scope = el.isolateScope();
+
+            expect($scope.isBusyFor({url: '/path'})).toBe(true);
+            expect($scope.isBusyFor({url: '', name:'name', remaining:0})).toBe(false);
+        });
+
+        it ('isBusyFor should return true only if name matches', function() {
+            var el = create('<button busy busy-when-name="name"></button>'), $scope = el.isolateScope();
+
+            expect($scope.isBusyFor({name: 'name'})).toBe(true);
+            expect($scope.isBusyFor({url: '/path', name: '', remaining:0 })).toBe(false);
+        });
 	});
 });
