@@ -109,6 +109,8 @@
 							if (scope.busyDisabled) $timeout(function() {element.attr('disabled', true);});
 							if (scope.busyText) element.html(scope.busyText);
 
+							element.removeClass(scope.busyRemoveClasses).addClass(scope.busyAddClasses);
+
 							scope.busy = true;
 						}
 					});
@@ -117,6 +119,9 @@
 						if (scope.busy && scope.isBusyFor(config)) {
 							if (scope.busyText) element.html(scope.notBusyContent);
 							element.attr('disabled', scope.notBusyDisabled===true);
+
+							element.removeClass(scope.notBusyRemoveClasses).addClass(scope.notBusyAddClasses);
+
 							scope.busy = false;
 						}
 					});

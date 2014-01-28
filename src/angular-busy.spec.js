@@ -259,5 +259,25 @@ describe('ngBusy', function() {
             expect($scope.isBusyFor({name: 'name'})).toBe(true);
             expect($scope.isBusyFor({url: '/path', name: '', remaining:0 })).toBe(false);
         });
+
+        it ('should add and remove classes when busy', function() {
+            var el = create('<button busy busy-add-classes="addme addme2" busy-remove-classes="removeme removeme2" class="keepme removeme removeme2"></button>');
+
+            $rootScope.$broadcast('busy.begin');
+
+            expect(el.attr('class')).toBe('keepme ng-scope ng-isolate-scope addme addme2');
+        });
+
+        it ('should add and remove classes when not busy', function() {
+            var el = create('<button busy not-busy-add-classes="addme addme2" not-busy-remove-classes="removeme removeme2" class="keepme removeme removeme2"></button>');
+
+            $rootScope.$broadcast('busy.begin');
+
+            expect(el.attr('class')).toBe('keepme removeme removeme2 ng-scope ng-isolate-scope');
+
+            $rootScope.$broadcast('busy.end-one', {remaining:0});
+
+            expect(el.attr('class')).toBe('keepme ng-scope ng-isolate-scope addme addme2');
+        });
 	});
 });
