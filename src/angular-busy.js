@@ -48,18 +48,70 @@
 			$httpProvider.interceptors.push('busyInterceptor');
 		}]);
 
-    // <button busy="Loading...">...
-    // <button busy="Loading..." busy-trigger="any|name|url" busy-trigger-value="string|/regex/">
-    // <button busy="" busy-options="options">...
-
-    // { begin: {when: any|name|url, matches: string|regex, addClasses: string, removeClasses: string, disabled:bool}, end{when:any|name|url, matches: string|regex, addClasses: string, removeClasses: string, disabled:bool}  }
+    // minimal: <button busy="Loading..." />
+    // complete: <button busy="Loading..." busy-when-url="string|/regex/" busy-when-name="string|/regex/" busy-add-classes="string" busy-remove-classes="string" busy-disabled="bool" not-busy-when-url="string|/regex/" not-busy-when-name="string|/regex/" not-busy-add-classes="string" not-busy-remove-classes="string" not-busy-disabled="bool" />
     
 	angular.module('ngBusy.busy', [])
-		.directive('busy', [function() {
+		.directive('busy', ['$parse', '$timeout', function($parse, $timeout) {
 			return {
 				restrict: 'A',
-				link: function($scope) {
-					
+				scope: {},
+				link: function(scope, element, attrs) {
+					attrs.$observe('busy', function(val) {
+						scope.busyText = angular.isString(val) && val.length > 0 ? val : 'Loading...';
+					});
+
+					attrs.$observe('busyWhenUrl', function(val) {
+						scope.busyWhenUrl = val;
+					});
+					attrs.$observe('busyWhenName', function(val) {
+						scope.busyWhenName = val;
+					});
+					attrs.$observe('busyAddClasses', function(val) {
+						scope.busyAddClasses = val;
+					});
+					attrs.$observe('busyRemoveClasses', function(val) {
+						scope.busyRemoveClasses = val;
+					});
+					attrs.$observe('busyDisabled', function(val) {
+						var parsed = $parse(val)(scope);
+						scope.busyDisabled = angular.isDefined(parsed) ? parsed : true;
+					});
+
+					attrs.$observe('notBusyWhenUrl', function(val) {
+						scope.notBusyWhenUrl = val;
+					});
+					attrs.$observe('notBusyWhenName', function(val) {
+						scope.notBusyWhenName = val;
+					});
+					attrs.$observe('notBusyAddClasses', function(val) {
+						scope.notBusyAddClasses = val;
+					});
+					attrs.$observe('notBusyRemoveClasses', function(val) {
+						scope.notBusyRemoveClasses = val;
+					});
+					attrs.$observe('notBusyDisabled', function(val) {
+						var parsed = $parse(val)(scope);
+						scope.notBusyDisabled = angular.isDefined(parsed) ? parsed : false;
+					});
+
+					scope.$on('busy.begin', function() {
+						if (!scope.busy) {
+							scope.notBusyContent = element.html();
+							//$timeout(function() {element.attr('disabled', true)})
+							if (scope.busyText) element.html(scope.busyText);
+
+							scope.busy = true;
+						}
+					});
+
+					scope.$on('busy.end-one', function(args) {
+						if (scope.busy) {							
+							if (scope.busyText) element.html(scope.notBusyContent);
+
+							scope.busy = false;
+						}
+					})
 				}
 			}
 		}]);
