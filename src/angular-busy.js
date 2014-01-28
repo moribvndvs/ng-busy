@@ -98,7 +98,7 @@
 					scope.$on('busy.begin', function() {
 						if (!scope.busy) {
 							scope.notBusyContent = element.html();
-							//$timeout(function() {element.attr('disabled', true)})
+							if (scope.busyDisabled) $timeout(function() {element.attr('disabled', true);});
 							if (scope.busyText) element.html(scope.busyText);
 
 							scope.busy = true;
@@ -108,7 +108,7 @@
 					scope.$on('busy.end-one', function(args) {
 						if (scope.busy) {							
 							if (scope.busyText) element.html(scope.notBusyContent);
-
+							element.attr('disabled', scope.notBusyDisabled===true);
 							scope.busy = false;
 						}
 					})

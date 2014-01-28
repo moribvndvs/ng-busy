@@ -127,12 +127,13 @@ describe('ngBusy', function() {
 	describe('busy', function() {
 		beforeEach(module('ngBusy.busy'));
 
-    	var $rootScope, $scope, $compile, $document, create;
+    	var $rootScope, $scope, $compile, $document, $timeout, create;
 
-    	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_) {
+    	beforeEach(inject(function(_$rootScope_, _$compile_, _$document_, _$timeout_) {
     		$rootScope = _$rootScope_;
             $compile = _$compile_;
             $document = _$document_;
+            $timeout = _$timeout_;
 
             create = function(template) {
             	template = template || '<button busy="Loading..."><i class="icon-ok"></i> Submit</button>';
@@ -193,6 +194,42 @@ describe('ngBusy', function() {
             $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
             expect($scope.busy).toBe(false);
             expect(el.html()).toBe('<i class="icon-ok"></i> Submit');            
+        });
+
+        it ('should disable buttons when busy then restore', function() {
+            var el = create(), $scope = el.isolateScope();
+
+            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});
+            $timeout.flush();
+            expect($scope.busy).toBe(true);
+            expect(el.attr('disabled')).toBe('disabled');
+
+            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            expect(el.attr('disabled')).toBeUndefined();
+        });
+
+        it ('should not disabled buttons', function() {
+            var el = create('<button busy busy-disabled="false"></button>'), $scope = el.isolateScope();
+
+            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});
+            $timeout.flush();
+            expect($scope.busy).toBe(true);
+            expect(el.attr('disabled')).toBeUndefined();
+
+            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            expect(el.attr('disabled')).toBeUndefined();
+        });
+
+        it ('should not renable buttons', function() {
+            var el = create('<button busy busy-disabled="false" not-busy-disabled="true"></button>'), $scope = el.isolateScope();
+
+            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});
+            $timeout.flush();
+            expect($scope.busy).toBe(true);
+            expect(el.attr('disabled')).toBeUndefined();
+
+            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            expect(el.attr('disabled')).toBe('disabled');
         });
 	});
 });
