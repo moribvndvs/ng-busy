@@ -247,17 +247,31 @@ describe('ngBusy', function() {
         });
 
         it ('isBusyFor should return true only if url matches', function() {
-            var el = create('<button busy busy-when-url="/path"></button>'), $scope = el.isolateScope();
+            var el = create('<button busy busy-when-url="/path" not-busy-when-url="/returnpath"></button>'), $scope = el.isolateScope();
 
-            expect($scope.isBusyFor({url: '/path'})).toBe(true);
+            // should match begin path
+            expect($scope.isBusyFor({url: '/path'}, true)).toBe(true);
+            expect($scope.isBusyFor({url: '/path'})).toBe(false);
+            // should match end path
+            expect($scope.isBusyFor({url: '/returnpath'})).toBe(true);
+            expect($scope.isBusyFor({url: '/returnpath'}, true)).toBe(false);
+
+            // should not match anything else
             expect($scope.isBusyFor({url: '', name:'name', remaining:0})).toBe(false);
         });
 
         it ('isBusyFor should return true only if name matches', function() {
-            var el = create('<button busy busy-when-name="name"></button>'), $scope = el.isolateScope();
+            var el = create('<button busy busy-when-name="name" not-busy-when-name="returnname"></button>'), $scope = el.isolateScope();
 
-            expect($scope.isBusyFor({name: 'name'})).toBe(true);
-            expect($scope.isBusyFor({url: '/path', name: '', remaining:0 })).toBe(false);
+            // should match begin name
+            expect($scope.isBusyFor({name: 'name'}, true)).toBe(true);
+            expect($scope.isBusyFor({name: 'name'})).toBe(false);
+            // should match end name
+            expect($scope.isBusyFor({name: 'returnname'})).toBe(true);
+            expect($scope.isBusyFor({name: 'returnname'}, true)).toBe(false);
+
+            // should not match anything else
+            expect($scope.isBusyFor({url: '/path', remaining:0})).toBe(false);
         });
 
         it ('should add and remove classes when busy', function() {

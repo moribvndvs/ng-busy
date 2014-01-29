@@ -96,11 +96,10 @@
 					});
 
 					scope.isBusyFor = function(config, begin) {
-						if (begin === true) return true;
-
-						if (scope.busyWhenName) return config.name == scope.busyWhenName;
-						else if (scope.busyWhenUrl) return config.url == scope.busyWhenUrl;
-						else return config.remaining <= 0;
+						var key;
+						if (scope[(key = begin ? 'busyWhenName' : 'notBusyWhenName')]) return config.name == scope[key];
+						else if (scope[(key = begin ? 'busyWhenUrl' : 'notBusyWhenUrl')]) return config.url == scope[key];
+						else return begin === true || config.remaining <= 0;
 					};
 
 					scope.$on('busy.begin', function(evt, config) {
