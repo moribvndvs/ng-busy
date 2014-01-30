@@ -54,16 +54,22 @@
 		}]);
 
     // minimal: <button busy="Loading..." />
-    // complete: <button busy="Loading..." busy-when-url="string|/regex/" busy-when-name="string|/regex/" busy-add-classes="string" busy-remove-classes="string" busy-disabled="bool" not-busy-when-url="string|/regex/" not-busy-when-name="string|/regex/" not-busy-add-classes="string" not-busy-remove-classes="string" not-busy-disabled="bool" />
+    // complete: <button busy="Loading..." busy-when-url="string" busy-when-name="string" busy-add-classes="string" busy-remove-classes="string" busy-disabled="bool" not-busy-when-url="string" not-busy-when-name="string" not-busy-add-classes="string" not-busy-remove-classes="string" not-busy-disabled="bool" />
     
 	angular.module('ngBusy.busy', [])
 		.directive('busy', ['$parse', '$timeout', function($parse, $timeout) {
 			return {
 				restrict: 'A',
+				tranclude:true,
 				scope: {},
+				controller: ['$scope', function($scope) {
+					this.setBusyMessageElement = function(element) {
+						$scope.busyMessageElement = element;
+					}
+				}],
 				link: function(scope, element, attrs) {
 					attrs.$observe('busy', function(val) {
-						scope.busyText = angular.isString(val) && val.length > 0 ? val : 'Loading...';
+						scope.busyMessage = val;
 					});
 
 					attrs.$observe('busyWhenUrl', function(val) {
@@ -105,19 +111,14 @@
 						if (scope[(key = begin ? 'busyWhenName' : 'notBusyWhenName')]) return config.name == scope[key];
 						else if (scope[(key = begin ? 'busyWhenUrl' : 'notBusyWhenUrl')]) return config.url == scope[key];
 						else return begin === true || config.remaining <= 0;
-						/*if (begin === true) {
-
-						}
-						if (scope.busyWhenName) return config.name == scope.busyWhenName;
-						else if (scope.busyWhenUrl) return config.url == scope.busyWhenUrl;
-						else return begin === true || config.remaining <= 0;*/
 					};
 
 					scope.$on('busy.begin', function(evt, config) {
 						if (!scope.busy && scope.isBusyFor(config, true)) {
-							scope.notBusyContent = element.html();
+							scope.originalContent = element.html();
 							if (scope.busyDisabled) $timeout(function() {element.attr('disabled', true);});
-							if (scope.busyText) element.html(scope.busyText);
+							var msgElement = scope.busyMessageElement ? scope.busyMessageElement.clone() : null;
+							if (msgElement || scope.busyMessage) element.html('').append(msgElement || scope.busyMessage);
 
 							element.removeClass(scope.busyRemoveClasses).addClass(scope.busyAddClasses);
 
@@ -127,7 +128,7 @@
 
 					scope.$on('busy.end-one', function(evt, config) {
 						if (scope.busy && scope.isBusyFor(config)) {
-							if (scope.busyText) element.html(scope.notBusyContent);
+							if (scope.originalContent) element.html(scope.originalContent);
 							element.attr('disabled', scope.notBusyDisabled===true);
 
 							element.removeClass(scope.notBusyRemoveClasses).addClass(scope.notBusyAddClasses);
@@ -137,7 +138,22 @@
 					});
 				}
 			}
-		}]);
+		}])
+		.directive('busyMessage', function() {
+			return {
+				restrict: 'AE',
+				transclude: true,
+				require: '^busy',
+				template: '',
+				replace: true,
+				compile: function(element, attr, transclude) {
+					// we're basically going to transclude the content, strip it, and set the busy message as the resulting transcluded HTML via the controller setBusyMessageElement function
+					return function link(scope, element, attr, busyCtrl) {
+						busyCtrl.setBusyMessageElement(transclude(scope, function() {}));
+					}
+				}
+			}
+		});
 
 	angular.module('ngBusy', ['ngBusy.interceptor', 'ngBusy.busy']);
 })(window, window.angular);

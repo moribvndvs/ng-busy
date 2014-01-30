@@ -145,7 +145,7 @@ describe('ngBusy', function() {
 
         it ('should use default options', function() {
             $scope = create('<button busy></button>').isolateScope();
-            expect($scope.busyText).toBe('Loading...');
+            expect($scope.busyMessage).toBe('');
             expect($scope.busyWhenUrl).toBeUndefined();
             expect($scope.busyWhenName).toBeUndefined();
             expect($scope.busyAddClasses).toBeUndefined();
@@ -160,7 +160,7 @@ describe('ngBusy', function() {
 
         it ('should use explicit options', function() {
             $scope = create('<button busy="Busy..." busy-when-url="url" busy-when-name="name" busy-add-classes="add classes" busy-remove-classes="remove classes" busy-disabled="false" not-busy-when-url="url" not-busy-when-name="name" not-busy-add-classes="add classes" not-busy-remove-classes="remove classes" not-busy-disabled="true"></button>').isolateScope();
-            expect($scope.busyText).toBe('Busy...');
+            expect($scope.busyMessage).toBe('Busy...');
             expect($scope.busyWhenUrl).toBe('url');
             expect($scope.busyWhenName).toBe('name');
             expect($scope.busyAddClasses).toBe('add classes');
@@ -173,19 +173,19 @@ describe('ngBusy', function() {
             expect($scope.notBusyDisabled).toBe(true);
         });
 
-        it('should swap original content with busy text on any busy.begin', function() {
+        it('should swap original content with busy message on any busy.begin', function() {
             var el = create(), $scope = el.isolateScope();
 
             expect($scope.busy).toBeFalsy();
 
             $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});
 
-            expect($scope.notBusyContent).toBe('<i class="icon-ok"></i> Submit');
+            expect($scope.originalContent).toBe('<i class="icon-ok"></i> Submit');
             expect(el.html()).toBe("Loading...");
             expect($scope.busy).toBe(true);
         });
 
-        it ('should swap busy text with original content on busy.end-one with zero remaining', function() {
+        it ('should swap busy message with original content on busy.end-one with zero remaining', function() {
             var el = create(), $scope = el.isolateScope();
             
             $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});            
@@ -292,6 +292,25 @@ describe('ngBusy', function() {
             $rootScope.$broadcast('busy.end-one', {remaining:0});
 
             expect(el.attr('class')).toBe('keepme ng-scope ng-isolate-scope addme addme2');
+        });
+
+        it ('should transclude child busy-message directive when present and use as busyMessage', function() {
+            var testValue = 'I\'m busy', expectedBusyMessage = '<strong class="ng-scope ng-binding">' + testValue + '</strong>', expectedNotBusyMessage = '<busy-message></busy-message><em>Submit</em>';
+            
+            $rootScope.testValue = testValue;
+
+            var el = create('<button busy><busy-message><strong>{{testValue}}</strong></busy-message><em>Submit</em></button>'), $scope = el.isolateScope();
+
+            expect(el.html()).toBe(expectedNotBusyMessage);
+            expect($scope.busyMessageElement[0].outerHTML).toBe(expectedBusyMessage);
+
+            $rootScope.$broadcast('busy.begin');
+
+            expect(el.html()).toBe(expectedBusyMessage);
+
+            $rootScope.$broadcast('busy.end-one', {remaining: 0});
+
+            expect(el.html()).toBe(expectedNotBusyMessage);
         });
 	});
 });
