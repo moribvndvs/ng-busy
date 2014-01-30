@@ -10,7 +10,7 @@ You may wish for a simple way of letting your parts of your UI know the app is d
 
 ========
 
-Authored by Mike Grabski
+Copyright Mike Grabski @HackedByChinese
 
 Licensed under [MIT](http://www.opensource.org/licenses/mit-license.php)
 
