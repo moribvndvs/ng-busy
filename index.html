@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="demo" id="ng-app">
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ng-Busy : An AngularJS module for reacting to when your app is busy." />
+    
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/site.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script>
+    <script src="https://rawgithub.com/hackedbychinese/ng-busy/master/build/angular-busy.min.js"></script>
+    <script src="js/ui-bootstrap-tpls-0.9.0.min.js"></script>
+    <script src="js/app.js"></script>
+    <title>Ng-Busy</title>
+  </head>
+
+  <body>
+
+    <!-- Wrap all page content here -->
+    <div id="wrap">
+
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#top">Ng-Busy</a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="#demo">Demo</a></li>
+              <li><a href="#gettingstarted">Getting Started</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+
+      <header class="jumbotron" id="top">
+        <div class="container">
+          <h1>Ng-Busy</h1>
+          <p>
+            An AngularJS module for reacting to when your app is busy.
+          </p>
+          <p>
+            <a href="https://github.com/HackedByChinese/ng-busy" class="btn btn-primary"><i class="fa fa-github fa-lg"></i> Source</a>
+          </p>
+        </div>        
+      </header>
+
+      <!-- Begin page content -->
+      <div class="container">
+        <section id="demo" data-ng-controller="DemoCtrl">
+          <header class="page-header">
+            <h2>Demo</h2>
+          </header>
+          <div class="panel panel-default">
+            <div class="panel-heading">Click to load posts from random subreddit.</div>
+            <div class="panel-body">
+              <p>
+              Clicking on the button below will display a custom busy message (containing HTML) when an HTTP request is made to load posts from a subreddit. When the request completes, the original content will be restored.
+              </p>
+              <button type="button" class="btn btn-primary" busy ng-click="fetch()">
+                <busy-message><i class="fa fa-refresh fa-spin"></i> Please wait...</busy-message>
+                <i class="fa fa-cloud-download"></i> Load posts
+              </button>
+            </div>
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="post in posts">
+                <div class="row">
+                  <div class="col-sm-1">
+                    <a href="{{post.data.url}}" ng-if="post.data.thumbnail != 'nsfw' && post.data.thumbnail != 'self'" target="_blank">
+                      <img alt="Article thumbnail" src="{{post.data.thumbnail}}" class="img-thumbnail" />
+                    </a>
+                  </div>
+                  <div class="col-sm-11">
+                    <h4 class="list-group-item-heading"><a href="{{post.data.url}}" target="_blank">{{post.data.title}}</a> <small>{{post.data.domain}}</small></h4>
+                    <p class="list-group-item-text">
+                      (<span class="up-vote">{{post.data.ups}}</span>|<span class="down-vote">{{post.data.downs}}</span>) Submitted on <span class="text-info">{{post.data.created_utc * 1000 | date:'short'}}</span> by <a href="http://www.reddit.com/u/{{post.data.author}}" target="_blank">{{post.data.author}}</a> to <a href="http://www.reddit.com/r/{{post.data.subreddit}}">{{post.data.subreddit}}</a>
+                    </p>
+                    <p class="list-group-item-text">
+                      <a href="http://www.reddit.com{{post.data.permalink}}"><i ng-class="{'fa': true, 'fa-comment': post.data.num_comments > 0, 'fa-comment-o': post.data.num_comments == 0 }"></i> <span ng-pluralize count="post.data.num_comments" when="{'0': 'No comments', '1': '1 comment', 'other': '{{post.data.num_comments}} comments' }"></span></a>
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div class="panel-footer" ng-show="posts">{{posts.length}} posts from <strong>/r/{{subreddit}}</strong>.</div>
+            <div class="panel-footer" ng-hide="posts">No posts to display yet.</div>
+          </div>
+        </section>
+        <section id="about">
+          <header class="page-header">
+            <h2>About</h2>
+          </header>
+          <p>
+            The core of this module is the <code>busyInterceptor</code> which installs itself in the <code>$http</code> service. It keeps track of when requests begin and end (whether they are rejected or completed successfully) and keeps a running tally of remaining requests. It broadcast events when requests begin and end (<code>busy.begin</code> and <code>busy.end</code>, respectively), passing an argument containing the URL, name (if provided in the config object passed to <code>$http</code>), and the remaining requests. You can respond to these events in your application to suit your needs.
+          </p>
+          <p>
+          Additionally, there is a <code>busy</code> directive which can be declared as an attribute on an element to modify it in response to these events. The primary use case for this directive is the <code>button</code> element. Using this example, <code>busy</code> can swap the buttons's current HTML content with a message and disable it when <code>busy.begin</code> is received, and then restore the original content and re-enable to button on <code>busy.end</code>. It can also add or remove classes when either event is received. Other potential uses for this directive might be to show/hide or change the appearance of an element on either event.
+          </p>
+        </section>
+        <section id="gettingstarted">
+          <header class="page-header">
+            <h2>Getting Started</h2>
+          </header>
+          <h3>Dependencies</h3>
+          <p>
+          The only required dependency is <a href="http://angularjs.org/">AngularJS (1.2 or later)</a>.
+          </p>
+          <h3>Files to Download</h3>
+          <p>
+          You can use the unminified <code>angular-busy.js</code> for development and minified <code>angular-busy.min.js</code> for production from <a href="https://github.com/HackedByChinese/ng-busy">here</a> or install them from Bower by entering the command line <code>bower install ng-busy</code>.
+          </p>
+          <p>
+          Once you have the JS file, simply include it after AngularJS.
+<pre><code>&lt;script src="angular.min.js"&gt;&lt;/script&gt;
+&lt;script src="angular-busy.min.js"&gt;&lt;/script&gt;
+</code></pre>
+          </p>
+          <h3>Configure</h3>
+          <p>
+          There is no additional configuration. The <code>busyInterceptor</code> will automatically push itself into the <code>$http</code> injectors.
+          </p>          
+        </section>
+      </div>
+    </div>
+    <footer id="footer">
+      <div class="container">
+        <p class="copyright">Designed and built by <a href="https://github.com/HackedByChinese">HackedByChinese</a>.</p>
+      </div>
+    </footer>
+  </body>
+</html>
