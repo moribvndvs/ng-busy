@@ -1,9 +1,11 @@
 ng-busy
 ==============
 
+An AngularJS module for reacting to when your app is busy. 
+
 ## About
 
-An AngularJS module for reacting to when your app is busy. [Demo](http://hackedbychinese.github.io/ng-busy)
+You may wish for a simple way of letting your parts of your UI know the app is doing something. A simple example is a submit button that lets the user know their request is being processed, and for it to be disabled until the request is complete so they don't submit twice. This module can help. You can go [here](http://hackedbychinese.github.io/ng-busy) for a demo.
 
 
 ========
