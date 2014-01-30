@@ -69,7 +69,7 @@
               <p>
               Clicking on the button below will display a custom busy message (containing HTML) when an HTTP request is made to load posts from a subreddit. When the request completes, the original content will be restored.
               </p>
-              <button type="button" class="btn btn-primary" busy ng-click="fetch()">
+              <button type="button" class="btn btn-primary" busy busy-when-name="reddit" ng-click="fetch()">
                 <busy-message><i class="fa fa-refresh fa-spin"></i> Please wait...</busy-message>
                 <i class="fa fa-cloud-download"></i> Load posts
               </button>
