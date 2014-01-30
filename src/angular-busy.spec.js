@@ -45,7 +45,7 @@ describe('ngBusy', function() {
     		$httpBackend.flush();
     	});
 
-    	it ('should decrement and broadcast busy.end-one event when a request is completed, and then broadcast busy.end-all when there are no outstanding.', function() {
+    	it ('should decrement and broadcast busy.end event when a request is completed, and then broadcast busy.end-all when there are no outstanding.', function() {
     		expect(interceptor.outstanding()).toBe(0);
 
     		$httpBackend.expectGET('path').respond({});
@@ -56,16 +56,12 @@ describe('ngBusy', function() {
     		$httpBackend.flush();
 
     		// make sure the events were broadcast and we end with 0 outstanding requests
-    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end-one', {url: 'path', name: 'test1', remaining: 1});
-    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end-one', {url: 'path', name: 'test2', remaining: 0});
+    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end', {url: 'path', name: 'test1', remaining: 1});
+    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end', {url: 'path', name: 'test2', remaining: 0});
     		expect(interceptor.outstanding()).toBe(0);
-
-    		// make sure the final event was broadcast
-    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end-all');
-
     	});
 
-    	it ('should decrement and broadcast busy.end-one event when a request is reject, and then broadcast busy.end-all when there are no outstanding.', function() {
+    	it ('should decrement and broadcast busy.end event when a request is reject, and then broadcast busy.end-all when there are no outstanding.', function() {
     		expect(interceptor.outstanding()).toBe(0);
 
     		$httpBackend.expectGET('path').respond(400);
@@ -76,13 +72,9 @@ describe('ngBusy', function() {
     		$httpBackend.flush();
 
     		// make sure the events were broadcast and we end with 0 outstanding requests
-    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end-one', {url: 'path', name: 'test1', remaining: 1});
-    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end-one', {url: 'path', name: 'test2', remaining: 0});
+    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end', {url: 'path', name: 'test1', remaining: 1});
+    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end', {url: 'path', name: 'test2', remaining: 0});
     		expect(interceptor.outstanding()).toBe(0);
-
-    		// make sure the final event was broadcast
-    		expect($rootScope.$broadcast).toHaveBeenCalledWith('busy.end-all');
-
     	});
 
     	it ('should ignore requests if notBusy is true', function() {
@@ -185,13 +177,13 @@ describe('ngBusy', function() {
             expect($scope.busy).toBe(true);
         });
 
-        it ('should swap busy message with original content on busy.end-one with zero remaining', function() {
+        it ('should swap busy message with original content on busy.end with zero remaining', function() {
             var el = create(), $scope = el.isolateScope();
             
             $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});            
             expect($scope.busy).toBe(true);
 
-            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            $rootScope.$broadcast('busy.end', {url: '/path', name: 'name', remaining: 0});
             expect($scope.busy).toBe(false);
             expect(el.html()).toBe('<i class="icon-ok"></i> Submit');            
         });
@@ -204,7 +196,7 @@ describe('ngBusy', function() {
             expect($scope.busy).toBe(true);
             expect(el.attr('disabled')).toBe('disabled');
 
-            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            $rootScope.$broadcast('busy.end', {url: '/path', name: 'name', remaining: 0});
             expect(el.attr('disabled')).toBeUndefined();
         });
 
@@ -216,7 +208,7 @@ describe('ngBusy', function() {
             expect($scope.busy).toBe(true);
             expect(el.attr('disabled')).toBeUndefined();
 
-            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            $rootScope.$broadcast('busy.end', {url: '/path', name: 'name', remaining: 0});
             expect(el.attr('disabled')).toBeUndefined();
         });
 
@@ -228,7 +220,7 @@ describe('ngBusy', function() {
             expect($scope.busy).toBe(true);
             expect(el.attr('disabled')).toBeUndefined();
 
-            $rootScope.$broadcast('busy.end-one', {url: '/path', name: 'name', remaining: 0});
+            $rootScope.$broadcast('busy.end', {url: '/path', name: 'name', remaining: 0});
             expect(el.attr('disabled')).toBe('disabled');
         });
 
@@ -289,7 +281,7 @@ describe('ngBusy', function() {
 
             expect(el.attr('class')).toBe('keepme removeme removeme2 ng-scope ng-isolate-scope');
 
-            $rootScope.$broadcast('busy.end-one', {remaining:0});
+            $rootScope.$broadcast('busy.end', {remaining:0});
 
             expect(el.attr('class')).toBe('keepme ng-scope ng-isolate-scope addme addme2');
         });
@@ -308,7 +300,7 @@ describe('ngBusy', function() {
 
             expect(el.html()).toBe(expectedBusyMessage);
 
-            $rootScope.$broadcast('busy.end-one', {remaining: 0});
+            $rootScope.$broadcast('busy.end', {remaining: 0});
 
             expect(el.html()).toBe(expectedNotBusyMessage);
         });

@@ -21,12 +21,12 @@
 					// simulate the busy event calls normally provided by the http interceptor provided with this module
 					$scope.$broadcast('busy.begin', config);
 					$timeout(function() {
-						$scope.$broadcast('busy.end-one', config);
+						$scope.$broadcast('busy.end', config);
 					}, 1000);
 				};
 
 				$scope.reset = function() {
-					$scope.$broadcast('busy.end-one', {remaining:0, url: $scope.notBusyWhenUrl, name: $scope.notBusyWhenName});
+					$scope.$broadcast('busy.end', {remaining:0, url: $scope.notBusyWhenUrl, name: $scope.notBusyWhenName});
 				};
 			});
 		</script>

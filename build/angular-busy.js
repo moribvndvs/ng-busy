@@ -15,13 +15,12 @@
 
 	            function complete() {
 	            	_total = _completed = 0;
-	            	$rootScope.$broadcast('busy.end-all');
 	            }
 
 	            function handleResponse(r) {
 	            	if (r.config.notBusy) return;
 
-	            	$rootScope.$broadcast('busy.end-one', {url: r.config.url, name: r.config.name, remaining: _total - ++_completed});
+	            	$rootScope.$broadcast('busy.end', {url: r.config.url, name: r.config.name, remaining: _total - ++_completed});
 	            	if (_completed >= _total) complete();
 	            }
 
@@ -126,7 +125,7 @@
 						}
 					});
 
-					scope.$on('busy.end-one', function(evt, config) {
+					scope.$on('busy.end', function(evt, config) {
 						if (scope.busy && scope.isBusyFor(config)) {
 							if (scope.originalContent) element.html(scope.originalContent);
 							element.attr('disabled', scope.notBusyDisabled===true);
