@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="sample">
+	<head>
+		<script src="../bower_components/angular/angular.js"></script>
+		<script src="../build/angular-busy.min.js"></script>
+		<!-- <script src="../src/angular-busy.js"></script> -->
+		<script type="text/javascript">
+			var app = angular.module('sample', ['ngBusy']);
+			app
+			.controller('BusyCtrl', function($scope, $timeout) {
+				$scope.busyMessage = "Please wait..";
+				$scope.busyWhenUrl = '/path';
+				$scope.notBusyWhenUrl = '/path';
+				$scope.busyWhenName = 'name';
+				$scope.notBusyWhenName = 'name';
+				$scope.busyDisabled = true;
+				$scope.notBusyDisabled = false;
+				$scope.transcludeMe = 'Test with HTML as busy content';
+
+				$scope.test = function(config) {
+					// simulate the busy event calls normally provided by the http interceptor provided with this module
+					$scope.$broadcast('busy.begin', config);
+					$timeout(function() {
+						$scope.$broadcast('busy.end', config);
+					}, 1000);
+				};
+
+				$scope.reset = function() {
+					$scope.$broadcast('busy.end', {remaining:0, url: $scope.notBusyWhenUrl, name: $scope.notBusyWhenName});
+				};
+			});
+		</script>
+	</head>
+	<body>
+		<section ng-controller="BusyCtrl">
+			<h1>Busy Directive</h1>
+			<div>
+				<label for="busyMessage">Busy Message</label> <input type="text" ng-model="busyMessage" name="busyMessage" id="busyMessage" />
+			</div>
+			<div>
+				<label for="busyWhenUrl">Busy When Url Equals</label> <input type="text" ng-model="busyWhenUrl" name="busyWhenUrl" id="busyWhenUrl" />
+			</div>
+			<div>
+				<label for="notBusyWhenUrl">Not Busy When Url Equals</label> <input type="text" ng-model="notBusyWhenUrl" name="notBusyWhenUrl" id="notBusyWhenUrl" />
+			</div>
+			<div>
+				<label for="busyWhenName">Busy When Name Equals</label> <input type="text" ng-model="busyWhenName" name="busyWhenName" id="busyWhenName" />
+			</div>
+			<div>
+				<label for="notBusyWhenName">Not Busy When Name Equals</label> <input type="text" ng-model="notBusyWhenName" name="notBusyWhenName" id="notBusyWhenName" />
+			</div>
+			<div>
+				<label for="busyDisabled">Busy Disabled</label> <input type="checkbox" ng-model="busyDisabled" />
+			</div>
+			<div>
+				<label for="notBusyDisabled">Not Busy Disabled</label> <input type="checkbox" ng-model="notBusyDisabled" />
+			</div>
+			<button type="button" busy="{{busyMessage}}" ng-click="test({remaining:0})" busy-disabled="{{busyDisabled}}" not-busy-disabled="{{notBusyDisabled}}">Test when any</button>
+			<button type="button" busy="{{busyMessage}}" busy-when-url="{{busyWhenUrl}}" not-busy-when-url="{{notBusyWhenUrl}}" busy-disabled="{{busyDisabled}}" not-busy-disabled="{{notBusyDisabled}}" ng-click="test({url:'/path', remaining:0})">Test when url matches '/path'</button>
+			<button type="button" busy="{{busyMessage}}" busy-when-name="{{busyWhenName}}" not-busy-when-name="{{notBusyWhenName}}" busy-disabled="{{busyDisabled}}" not-busy-disabled="{{notBusyDisabled}}" ng-click="test({name:'name', remaining:0})">Test when name matches 'name'</button>
+			<button type="button" ng-click="reset()">Reset all</button>
+
+			<h2>HTML Busy Message</h2>
+			<p>You must use the <code>busy-message</code> directive (either by attribute or element) to define a busy message that contains HTML.
+			<button type="button" busy ng-click="test({remaining:0})">
+				<busy-message><strong>{{busyMessage}}</strong></busy-message>
+				{{transcludeMe}}
+			</button>
+
+		</section>
+	</body>
+</html>
