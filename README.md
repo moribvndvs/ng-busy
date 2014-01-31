@@ -1,4 +1,4 @@
-ng-busy
+ng-busy &nbsp;[![Build Status](https://travis-ci.org/HackedByChinese/ng-busy.png?branch=master)](https://travis-ci.org/HackedByChinese/ng-busy)
 ==============
 
 An AngularJS module for reacting to when your app is busy. 
