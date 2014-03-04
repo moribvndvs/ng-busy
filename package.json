@@ -1,6 +1,6 @@
 {
   "name": "ng-busy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An AngularJS module for reacting to when your app is busy.",
   "main": [
     "build/angular-busy.js",
