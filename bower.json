@@ -6,7 +6,7 @@
     "Mike Grabski <me@mikegrabski.com>"
   ],
   "description": "An AngularJS module for reacting to when your app is busy.",
-  "main": ["build/angular-busy.js", "build/angular-busy.min.js", "build/angular-busy.map"],
+  "main": "build/angular-busy.js",
   "keywords": [
     "angular",
     "angularjs",
