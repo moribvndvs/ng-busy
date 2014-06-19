@@ -1,6 +1,6 @@
 /*** An AngularJS module for reacting to when your app is busy.
 * @author Mike Grabski <me@mikegrabski.com>
-* @version v0.1.2
+* @version v0.1.3
 * @link https://github.com/HackedByChinese/ng-busy.git
 * @license MIT
 */
