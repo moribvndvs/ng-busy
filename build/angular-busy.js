@@ -1,6 +1,6 @@
 /*** An AngularJS module for reacting to when your app is busy.
 * @author Mike Grabski <me@mikegrabski.com>
-* @version v0.1.2
+* @version v0.1.3
 * @link https://github.com/HackedByChinese/ng-busy.git
 * @license MIT
 */
@@ -10,7 +10,7 @@
 	angular.module('ngBusy.interceptor', [])
 		.provider('busyInterceptor', function() {
 
-			this.$get = function($rootScope, $q) {
+			this.$get = ['$rootScope', '$q', function($rootScope, $q) {
 				var _total = 0, _completed = 0;
 
 	            function complete() {
@@ -44,17 +44,15 @@
 						return $q.reject(rejection);
 					}
 				};
-			};
-
-			this.$get.$inject = ['$rootScope', '$q'];			
+			}];
 		})
-		.config(['$httpProvider', function($httpProvider) {			
+		.config(['$httpProvider', function($httpProvider) {
 			$httpProvider.interceptors.push('busyInterceptor');
 		}]);
 
     // minimal: <button busy="Loading..." />
     // complete: <button busy="Loading..." busy-when-url="string" busy-when-name="string" busy-add-classes="string" busy-remove-classes="string" busy-disabled="bool" not-busy-when-url="string" not-busy-when-name="string" not-busy-add-classes="string" not-busy-remove-classes="string" not-busy-disabled="bool" />
-    
+
 	angular.module('ngBusy.busy', [])
 		.directive('busy', ['$parse', '$timeout', function($parse, $timeout) {
 			return {

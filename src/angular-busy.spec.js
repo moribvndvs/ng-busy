@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ngBusy', function() {
-    
+
     beforeEach(function () {
         this.addMatchers({
             toEqualData: function (expected) {
@@ -41,7 +41,7 @@ describe('ngBusy', function() {
     		});
 
     		$http.get('path', {name: 'test'});
-    		
+
     		$httpBackend.flush();
     	});
 
@@ -87,7 +87,7 @@ describe('ngBusy', function() {
     		});
 
     		$http.get('path', {notBusy:true});
-    		
+
     		$httpBackend.flush();
     	});
 
@@ -100,7 +100,7 @@ describe('ngBusy', function() {
     		$httpBackend.flush();
 
     		expect(interceptor.outstanding()).toBe(0);
-    		expect($rootScope.$broadcast).not.toHaveBeenCalled();    		
+    		expect($rootScope.$broadcast).not.toHaveBeenCalled();
     	});
 
     	it ('should ignore rejections if notBusy is true', function() {
@@ -179,13 +179,13 @@ describe('ngBusy', function() {
 
         it ('should swap busy message with original content on busy.end with zero remaining', function() {
             var el = create(), $scope = el.isolateScope();
-            
-            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});            
+
+            $rootScope.$broadcast('busy.begin', {url: '/path', name: 'name'});
             expect($scope.busy).toBe(true);
 
             $rootScope.$broadcast('busy.end', {url: '/path', name: 'name', remaining: 0});
             expect($scope.busy).toBe(false);
-            expect(el.html()).toBe('<i class="icon-ok"></i> Submit');            
+            expect(el.html()).toBe('<i class="icon-ok"></i> Submit');
         });
 
         it ('should disable buttons when busy then restore', function() {
@@ -287,18 +287,18 @@ describe('ngBusy', function() {
         });
 
         it ('should transclude child busy-message directive when present and use as busyMessage', function() {
-            var testValue = 'I\'m busy', expectedBusyMessage = '<strong class="ng-scope ng-binding">' + testValue + '</strong>', expectedNotBusyMessage = '<busy-message></busy-message><em>Submit</em>';
-            
+            var testValue = 'I\'m busy', expectedNotBusyMessage = '<busy-message></busy-message><em>Submit</em>';
+
             $rootScope.testValue = testValue;
 
             var el = create('<button busy><busy-message><strong>{{testValue}}</strong></busy-message><em>Submit</em></button>'), $scope = el.isolateScope();
 
             expect(el.html()).toBe(expectedNotBusyMessage);
-            expect($scope.busyMessageElement[0].outerHTML).toBe(expectedBusyMessage);
+            expect($scope.busyMessageElement[0].outerHTML).toMatch('<strong class="[a-z\\-\\s]+">I\'m busy</strong>');
 
             $rootScope.$broadcast('busy.begin');
 
-            expect(el.html()).toBe(expectedBusyMessage);
+            expect(el.html()).toMatch('<strong class="[a-z\\-\\s]+">I\'m busy</strong>');
 
             $rootScope.$broadcast('busy.end', {remaining: 0});
 
