@@ -1,6 +1,6 @@
 /*** An AngularJS module for reacting to when your app is busy.
 * @author Mike Grabski <me@mikegrabski.com>
-* @version v0.1.3
+* @version v0.2.0
 * @link https://github.com/HackedByChinese/ng-busy.git
 * @license MIT
 */
@@ -105,8 +105,8 @@
 
 					scope.isBusyFor = function(config, begin) {
 						var key;
-						if (scope[(key = begin ? 'busyWhenName' : 'notBusyWhenName')]) return config.name == scope[key];
-						else if (scope[(key = begin ? 'busyWhenUrl' : 'notBusyWhenUrl')]) return config.url == scope[key];
+						if (scope[(key = begin ? 'busyWhenName' : 'notBusyWhenName')]) return !!config.name && !!config.name.match(scope[key]);
+						else if (scope[(key = begin ? 'busyWhenUrl' : 'notBusyWhenUrl')]) return !!config.url && !!config.url.match(scope[key]);
 						else return begin === true || config.remaining <= 0;
 					};
 
