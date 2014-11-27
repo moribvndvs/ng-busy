@@ -252,8 +252,36 @@ describe('ngBusy', function() {
             expect($scope.isBusyFor({url: '', name:'name', remaining:0})).toBe(false);
         });
 
+        it ('isBusyFor should return true only if url matches regex', function() {
+          var el = create('<button busy busy-when-url="^/path" not-busy-when-url="^/.+path"></button>'), $scope = el.isolateScope();
+
+          // should match begin path
+          expect($scope.isBusyFor({url: '/path/more?qs=whatever'}, true)).toBe(true);
+          expect($scope.isBusyFor({url: '/path/more?qs=whatever'})).toBe(false);
+          // should match end path
+          expect($scope.isBusyFor({url: '/returnpath/more?qs=whatever'})).toBe(true);
+          expect($scope.isBusyFor({url: '/returnpath/more?qs=whatever'}, true)).toBe(false);
+
+          // should not match anything else
+          expect($scope.isBusyFor({url: '', name:'name', remaining:0})).toBe(false);
+        });
+
         it ('isBusyFor should return true only if name matches', function() {
-            var el = create('<button busy busy-when-name="name" not-busy-when-name="returnname"></button>'), $scope = el.isolateScope();
+            var el = create('<button busy busy-when-name="begin" not-busy-when-name="return"></button>'), $scope = el.isolateScope();
+
+            // should match begin name
+            expect($scope.isBusyFor({name: 'begin'}, true)).toBe(true);
+            expect($scope.isBusyFor({name: 'begin'})).toBe(false);
+            // should match end name
+            expect($scope.isBusyFor({name: 'return'})).toBe(true);
+            expect($scope.isBusyFor({name: 'return'}, true)).toBe(false);
+
+            // should not match anything else
+            expect($scope.isBusyFor({url: '/path', remaining:0})).toBe(false);
+        });
+
+        it ('isBusyFor should return true only if name matches regex', function() {
+            var el = create('<button busy busy-when-name="^na.{2}$" not-busy-when-name=".+name"></button>'), $scope = el.isolateScope();
 
             // should match begin name
             expect($scope.isBusyFor({name: 'name'}, true)).toBe(true);
