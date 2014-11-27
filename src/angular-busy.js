@@ -100,8 +100,8 @@
 
 					scope.isBusyFor = function(config, begin) {
 						var key;
-						if (scope[(key = begin ? 'busyWhenName' : 'notBusyWhenName')]) return config.name == scope[key];
-						else if (scope[(key = begin ? 'busyWhenUrl' : 'notBusyWhenUrl')]) return config.url == scope[key];
+						if (scope[(key = begin ? 'busyWhenName' : 'notBusyWhenName')]) return !!config.name && !!config.name.match(scope[key]);
+						else if (scope[(key = begin ? 'busyWhenUrl' : 'notBusyWhenUrl')]) return !!config.url && !!config.url.match(scope[key]);
 						else return begin === true || config.remaining <= 0;
 					};
 
