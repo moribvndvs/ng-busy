@@ -132,8 +132,6 @@
 
                             element.attr('disabled', scope.notBusyDisabled===true);
 
-                            console.log(scope.originalMessageElement);
-
                             var msgElement = scope.originalMessageElement;// ? scope.originalMessageElement.clone() : null;
                             if (msgElement || scope.originalMessage) element.html('').append(msgElement || scope.originalMessage);
 
