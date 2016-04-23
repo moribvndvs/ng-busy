@@ -124,7 +124,7 @@
 					});
 
 					scope.$on('busy.end', function(evt, config) {
-						if (scope.busy && scope.isBusyFor(config)) {
+						if (scope.busy && scope.isBusyFor(config) && element.attr('ngDisabled')) {
 							if (scope.originalContent) element.html(scope.originalContent);
 							element.attr('disabled', scope.notBusyDisabled===true);
 
