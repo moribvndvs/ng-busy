@@ -131,7 +131,14 @@
 							element.removeClass(scope.notBusyRemoveClasses).addClass(scope.notBusyAddClasses);
 
 							scope.busy = false;
-						}
+						} else if(!element.attr('ngDisabled')) {
+                            if (scope.originalContent) element.html(scope.originalContent);
+                            //element.attr('disabled', scope.notBusyDisabled===true);
+
+                            element.removeClass(scope.notBusyRemoveClasses).addClass(scope.notBusyAddClasses);
+
+                            scope.busy = false;
+                        }
 					});
 				}
 			}
